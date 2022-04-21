@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"encoding/json"
+	"os"
 )
 
 func formatReqHeaders(r *http.Request) map[string]string {
@@ -32,6 +33,10 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 
 		resp["Body"] = string(body)
 	}
+
+	// pull environment vars and add to response also
+	envs := os.Environ()
+	resp["EnvironmentVariables"] = envs
 
 	// set standard headers
 	w.WriteHeader(http.StatusOK)
