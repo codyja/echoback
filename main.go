@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/ioutil"
 	"log"
 	"net/http"
 	"encoding/json"
@@ -14,9 +15,6 @@ func formatReqHeaders(r *http.Request) map[string]string {
 		headers[k] = value
 	}
 
-	//resp := make(map[string]interface{})
-	//resp["RequestHeaders"] = headers
-
 	return headers
 }
 
@@ -27,6 +25,13 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	// format headers into map
 	headers := formatReqHeaders(r)
 	resp["RequestHeaders"] = headers
+
+	// if post take data in request and add to response also
+	if r.Method == "POST" {
+		body, _ := ioutil.ReadAll(r.Body)
+
+		resp["Body"] = string(body)
+	}
 
 	// set standard headers
 	w.WriteHeader(http.StatusOK)
